@@ -3,6 +3,7 @@ using namespace std;
 
 int findGreater(string num1, string num2);
 string subtract(string num1, string num2);
+string add(string num1, string num2);
 
 string add(string num1, string num2){
     if(num1[0] == '-' && num2[0] == '-'){
@@ -36,6 +37,8 @@ string add(string num1, string num2){
     }
     if(carry) ans.push_back('0' + carry);
     reverse(ans.begin(), ans.end());
+    while (ans.size() > 1 && ans[0] == '0')
+    ans.erase(ans.begin());
     return ans;
 }
 
