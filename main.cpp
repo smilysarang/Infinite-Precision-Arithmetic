@@ -4,7 +4,28 @@ using namespace std;
 int findGreater(string num1, string num2);
 string subtract(string num1, string num2);
 string add(string num1, string num2);
+string multiply(string num1, string num2);
+string multdig(string num, string d);
 
+string multdig(string num, string d){
+    int len = num.size();
+    int j = len-1;
+    string ans = "";
+    int dig = d[0] - '0';
+    int carry = 0;
+    while(j >= 0){
+        int strd = num[j] - '0';
+        int prod = dig * strd + carry;
+        ans.push_back('0' + (prod % 10));
+        carry = prod / 10;
+        j--;
+    }
+    if(carry) ans.push_back('0' + carry);
+    reverse(ans.begin(), ans.end());
+    while (ans.size() > 1 && ans[0] == '0') ans.erase(ans.begin());
+
+    return ans;
+}
 string add(string num1, string num2){
     if(num1[0] == '-' && num2[0] == '-'){
         num1.erase(num1.begin());
@@ -37,8 +58,8 @@ string add(string num1, string num2){
     }
     if(carry) ans.push_back('0' + carry);
     reverse(ans.begin(), ans.end());
-    while (ans.size() > 1 && ans[0] == '0')
-    ans.erase(ans.begin());
+    while (ans.size() > 1 && ans[0] == '0') ans.erase(ans.begin());
+
     return ans;
 }
 
@@ -75,6 +96,7 @@ string subtract(string num1, string num2){
         i--;
         j--;
     }
+    
     reverse(ans.begin(), ans.end());
 
     while (ans.size() > 1 && ans[0] == '0')
@@ -99,6 +121,37 @@ int findGreater(string num1, string num2){
     }
     return -1;
 }
+
+string multiply(string num1, string num2){
+    if(num1[0] == '-' && num2[0] == '-'){
+        num1.erase(num1.begin());
+        num2.erase(num2.begin());
+        return multiply(num1, num2);
+    }
+    if(num1[0] == '-'){
+        num1.erase(num1.begin());
+        return "-" + multiply(num1, num2);
+    }
+    if(num2[0] == '-'){
+        num2.erase(num2.begin());
+        return "-" + multiply(num1, num2);
+    }
+    int len1 = num1.size(), len2 = num2.size();
+    if(len1 < len2) return multiply(num2, num1);
+    int i = len1-1, j = len2-1;
+    string ans = "";
+    int c = 0;
+    while(j >= 0){
+        string d = "";
+        d += num2[j];
+        string m = multdig(num1, d);
+        for(int i = 0; i < c; i++) m.push_back('0');
+        ans = add(m, ans);
+        c++;
+        j--;
+    }
+    return ans;
+}
 int main(){
     string num1, op, num2;
     cin >> num1 >> op >> num2;
@@ -112,5 +165,9 @@ int main(){
     else if(op == "-"){
     string difference = subtract(num1, num2);
     cout << difference << endl;
+    }
+    else if(op == "*" || op == "x"){
+        string product = multiply(num1, num2);
+        cout << product << endl;
     }
 }
