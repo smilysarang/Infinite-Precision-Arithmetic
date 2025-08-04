@@ -179,12 +179,13 @@ string divide(string num1, string num2){
     string cur = "";
     while(j < len1){
         cur.push_back(num1[j]);
-        while(cur.size() > 1 && cur[0] == '0') cur.erase(cur.begin());
+        trimLeadingZeros(cur);
 
         int count = 0;
         while(findGreater(cur, num2) != 2){
             cur = subtract(cur, num2);
             count++;
+            trimLeadingZeros(cur);
         }
         ans.push_back('0' + count);
         j++;
