@@ -6,7 +6,10 @@ string subtract(string num1, string num2);
 string add(string num1, string num2);
 string multiply(string num1, string num2);
 string multdig(string num, string d);
-
+void trimLeadingZeros(string &s) {
+    while (s.size() > 1 && s[0] == '0')
+        s.erase(s.begin());
+}
 string multdig(string num, string d){
     int len = num.size();
     int j = len-1;
@@ -22,8 +25,7 @@ string multdig(string num, string d){
     }
     if(carry) ans.push_back('0' + carry);
     reverse(ans.begin(), ans.end());
-    while (ans.size() > 1 && ans[0] == '0') ans.erase(ans.begin());
-
+    trimLeadingZeros(ans);
     return ans;
 }
 string add(string num1, string num2){
@@ -58,8 +60,7 @@ string add(string num1, string num2){
     }
     if(carry) ans.push_back('0' + carry);
     reverse(ans.begin(), ans.end());
-    while (ans.size() > 1 && ans[0] == '0') ans.erase(ans.begin());
-
+    trimLeadingZeros(ans);
     return ans;
 }
 
@@ -77,7 +78,6 @@ string subtract(string num1, string num2){
         num2.erase(num2.begin());
         return add(num1, num2);
     }
-
     int len1 = num1.size(), len2 = num2.size();
     int big =  findGreater(num1, num2);
     if(big == 2) return "-" + subtract(num2, num1);
@@ -99,8 +99,7 @@ string subtract(string num1, string num2){
     
     reverse(ans.begin(), ans.end());
 
-    while (ans.size() > 1 && ans[0] == '0')
-        ans.erase(ans.begin());
+    trimLeadingZeros(ans);
 
     return ans;
 }
@@ -150,14 +149,55 @@ string multiply(string num1, string num2){
         c++;
         j--;
     }
+    trimLeadingZeros(ans);
+    return ans;
+}
+bool isZero(string num){
+    for(auto ch: num) if(ch != '0') return false;
+    return true;
+}
+string divide(string num1, string num2){
+    if(num1[0] == '-' && num2[0] == '-'){
+        num1.erase(num1.begin());
+        num2.erase(num2.begin());
+        return divide(num1, num2);
+    }
+    if(num1[0] == '-'){
+        num1.erase(num1.begin());
+        return "-" + divide(num1, num2);
+    }
+    if(num2[0] == '-'){
+        num2.erase(num2.begin());
+        return "-" + divide(num1, num2);
+    }
+    if(isZero(num2)) return "Error: Division by 0 not possible";
+    int len1 = num1.size(), len2 = num2.size();
+    if(findGreater(num1, num2) == 2) return "0";
+
+    int j = 0;
+    string ans = "";
+    string cur = "";
+    while(j < len1){
+        cur.push_back(num1[j]);
+        while(cur.size() > 1 && cur[0] == '0') cur.erase(cur.begin());
+
+        int count = 0;
+        while(findGreater(cur, num2) != 2){
+            cur = subtract(cur, num2);
+            count++;
+        }
+        ans.push_back('0' + count);
+        j++;
+    }
+    trimLeadingZeros(ans);
     return ans;
 }
 int main(){
     string num1, op, num2;
     cin >> num1 >> op >> num2;
 
-    int len1 = num1.size(), len2 = num2.size();
-    int i = len1-1, j = len2-1;
+    trimLeadingZeros(num1);
+    trimLeadingZeros(num2);
     if(op == "+"){
     string sum = add(num1, num2);
     cout << sum << endl;
@@ -169,5 +209,9 @@ int main(){
     else if(op == "*" || op == "x"){
         string product = multiply(num1, num2);
         cout << product << endl;
+    }
+    else if(op == "/"){
+        string quotient = divide(num1, num2);
+        cout << quotient << endl;
     }
 }
