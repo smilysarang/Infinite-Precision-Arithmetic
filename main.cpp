@@ -6,6 +6,7 @@ string subtract(string num1, string num2);
 string add(string num1, string num2);
 string multiply(string num1, string num2);
 string multdig(string num, string d);
+string divide(string num1, string num2);
 void trimLeadingZeros(string &s) {
     while (s.size() > 1 && s[0] == '0')
         s.erase(s.begin());
